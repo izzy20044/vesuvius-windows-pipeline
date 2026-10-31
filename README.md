@@ -78,13 +78,19 @@ venv314\Scripts\python scripts\villa_sweep.py <surface.zarr> <out_dir> --models 
 
 ## First Letters screen: PHerc0358 and PHerc0813 (negative so far)
 
-One RunPod A100 night (about $9) with the pipeline in `pod/`:
+One RunPod A100 night (about $9) with the pipeline in `pod/`, then free runs on the RTX 3070 Ti
+(`scripts/screen_local.sh`, `scripts/screen_pre_local.sh`):
 
 | scroll | band (z) | fit | windings screened | on-sheet after snap | result |
 |---|---|---|---|---|---|
 | PHerc0358 | 8700-10200 | 15,245 steps ACW, 12.3% tracks satisfied (2k-step test) | 41 (w030-w110, every other) | 93.6% | no text |
 | PHerc0358 | 7200-8700 | 10,000 steps ACW | 41 | 90.0% | no text |
+| PHerc0358 | 4500-5100 | 8,000 steps ACW **on the 3070 Ti** (3h51m), 16.9% tracks / 53.5% points | 41 | 96-97% | no text; top tiles sit at the theta = 0 splice seam |
 | PHerc0813 | 9000-10000 | published meshes, [mkorayemai-web/vesuvius-band-sweep](https://github.com/mkorayemai-web/vesuvius-band-sweep) v1 | 21 (every 4th) | (pre-snapped) | no text; one lead (w086), checked below: not text |
+
+A 600-slice band fits in 8 GB and trains at ~1.7 s/step on the 3070 Ti; a 1,500-slice band does not
+(VRAM spills to system RAM). Snapping on Windows needs `scripts/snap_meshes_local.py`, which runs
+the chunk sampling serially because the original uses the `fork` start method.
 
 Screen: dense_native at d = 0 on both sides of each winding, scored per ~1.4 x 1.4 cm tile as
 mean(reverse - forward) ink probability. The ACW and CW 2,000-step test fits on PHerc0358 tied
