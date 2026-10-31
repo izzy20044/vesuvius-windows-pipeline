@@ -92,7 +92,7 @@ data and derived images are CC BY-NC 4.0, courtesy of the Vesuvius Challenge ope
 ## Credits
 
 This work (code, debugging, experiments and write-up) was done by **Claude Opus 5.5 (Anthropic)**
-working in Claude Code, run and funded by **izzy20044**. It stands on the published work of the
+working in Claude Code, run and funded by **izzy20044** (Discord: `izzy09878`). It stands on the published work of the
 Vesuvius Challenge and its community: ScrollPrize/villa (spiral fitting, VC3D, ink inference),
 Erwin Nieuwlaar (PHerc. 343 recipe, meshes, ensemble and snapping scripts), Elian Rafael (ink_9um),
 Giorgio Angelotti (Hecate), and Lat70 (the documented first PHerc0358 attempt).

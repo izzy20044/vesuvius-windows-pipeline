@@ -29,16 +29,21 @@ venv314\Scripts\python -m pip install --no-deps -e villa\vesuvius
 
 * Inputs must be pre-resampled to exactly 9.6 um (16 planes) or 2.4 um (64 planes); Hecate refuses
   anything else.
-* On Windows, a failure inside `predict()` is hidden behind a `PermissionError` from
-  `TemporaryDirectory` cleanup (the memmap is still open). `patches/hecate_windows_memmap.patch`
-  closes the memmap before cleanup so real errors surface.
+* On Windows, an error inside `predict()` (for example "Insufficient depth") is followed by a long
+  `PermissionError` traceback from `TemporaryDirectory` cleanup, because the memmap is still open.
+  The real error is the **first** traceback; read the head of the output, not the tail.
+  `patches/hecate_windows_memmap.patch` closes the memmap explicitly; it is optional.
 
 ## 3. Rendering (VC3D)
 
 * Use the official `VC3D-*-win64.zip` release; `vc_render_tifxyz.exe --volume <https URL> ...` streams
   from the open-data bucket.
-* On Windows the renderer **does not exit** after writing its outputs. Watch the log / last write
-  time and stop the process once all pyramid levels are written (it exits normally on Linux).
+* On the test machine (Windows 10, build `32a4958`), `vc_render_tifxyz.exe` processes did not fully
+  terminate: the process reports an exit code, but its kernel object (~270 MB working set) stays
+  listed in `Win32_Process`, cannot be killed, and clears only on reboot. A full render still wrote
+  all outputs; small cropped renders wrote none. It could not be attributed to VC3D rather than the
+  machine (security software or network drivers can cause this), so it was not reported upstream.
+  Watch the log and the output files rather than the process. On Linux the renderer exits normally.
 * villa reads level 0; present renders as a level-0-only zarr group (a directory junction to `0/`
   plus a `.zgroup`) so its occupancy scan selects the same patches as on Linux.
 
@@ -58,6 +63,8 @@ cmake --build native/build --config Release
 # copy track_crossings.cp314-win_amd64.pyd into <venv>\Lib\site-packages\vc\ next to a minimal __init__.py
 ```
 
+  * (On villa `main` as of 2026-10-30, `track_crossings.cpp` no longer uses OpenMP, so this point and
+    villa issue #1633 only apply to `0fb38c45`-era sources.)
   * Build it **without OpenMP** (`VC_OPENMP=OFF`). An `/openmp:llvm` build loads `libomp140` while
     torch loads Intel's `libiomp5md`, and the process aborts with `OMP: Error #15`. The suggested
     `KMP_DUPLICATE_LIB_OK=TRUE` is documented as able to give silently wrong results; don't use it.
@@ -67,7 +74,8 @@ cmake --build native/build --config Release
 * Published `*.dbm.crossings.npz` caches record the DBM's `mtime_ns`. A byte-identical download has a
   new mtime, and NTFS (100 ns ticks) cannot hold the original value, so the 1.4 GB cache is rejected
   and recomputed. `scripts/rebind_crossing_cache.py` rewrites only the signature after checking name and
-  size (on Linux, restoring the mtime with `os.utime(ns=...)` is enough).
+  size (on Linux, restoring the mtime with `os.utime(ns=...)` is enough). villa `main` now falls back
+  to a content check when the signature differs, so newer fitter versions accept the cache directly.
 * **8 GB is not enough** for a 1,500-slice band with lasagna normals and the surface distance field
   (4.6 GiB resident). Windows does not fail with out-of-memory; it spills to system RAM and the fit
   slows to an estimated ~389 h. Use a >= 24 GB card for full bands (see [POD.md](POD.md)).
