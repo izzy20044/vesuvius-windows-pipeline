@@ -84,7 +84,7 @@ One RunPod A100 night (about $9) with the pipeline in `pod/`:
 |---|---|---|---|---|---|
 | PHerc0358 | 8700-10200 | 15,245 steps ACW, 12.3% tracks satisfied (2k-step test) | 41 (w030-w110, every other) | 93.6% | no text |
 | PHerc0358 | 7200-8700 | 10,000 steps ACW | 41 | 90.0% | no text |
-| PHerc0813 | 9000-10000 | published meshes, [mkorayemai-web/vesuvius-band-sweep](https://github.com/mkorayemai-web/vesuvius-band-sweep) v1 | 21 (every 4th) | (pre-snapped) | no text; one weak lead (w086), below |
+| PHerc0813 | 9000-10000 | published meshes, [mkorayemai-web/vesuvius-band-sweep](https://github.com/mkorayemai-web/vesuvius-band-sweep) v1 | 21 (every 4th) | (pre-snapped) | no text; one lead (w086), checked below: not text |
 
 Screen: dense_native at d = 0 on both sides of each winding, scored per ~1.4 x 1.4 cm tile as
 mean(reverse - forward) ink probability. The ACW and CW 2,000-step test fits on PHerc0358 tied
@@ -102,6 +102,30 @@ papyrus at left and right, not to writing; the clean single sheet in the middle 
 This is a single-model, single-depth screen of every second winding, so it lowers the odds of
 text in these bands; it does not rule it out. Fitted meshes for all 240 windings are available on
 request.
+
+### Following up the one lead: PHerc0813 w086
+
+w086 (6.8 cm2, z 9000-10000) had the highest side asymmetry of the night (+0.174 best tile,
++0.074 whole winding). It was re-checked locally on the RTX 3070 Ti with the full PHerc. 343
+recipe: 66-layer render, all four models (dense_native, ink_9um s42/s43, Hecate) at d = -2..+2 on
+both sides (40 maps, 67 min), combined with Nieuwlaar's `ensemble_maps.py`. For calibration the
+same comparison was made on the PHerc. 343 winning region:
+
+| | PHerc. 343 winning region | PHerc0813 w086 |
+|---|---|---|
+| one side | two rows of letter-sized marks | mottled texture, brightest over folds |
+| other side | scattered specks | the same mottled texture |
+| side-to-side correlation of the ensemble | **+0.25** | **+0.53 / +0.55** (d = +1 / 0) |
+
+![w086 vs PHerc. 343, same ensemble and scale](results/w086_vs_pherc343_ensemble.png)
+*Top two: w086, both sides. Bottom two: PHerc. 343, both sides. Same models, depths, ensemble and
+physical scale.*
+
+Verdict: not text. The w086 asymmetry is a broad difference in how the two faces' texture looks to
+the models, concentrated over folded papyrus, with no row structure. A practical rule that came out
+of this: real text on these scans survives a rough check (rows appear with three models at a single
+depth), so a candidate that needs squinting is not one. `scripts/enhance_sides.py` produces the
+both-sides views with identical processing, so contrast boosting cannot favour one side.
 
 ## License
 
