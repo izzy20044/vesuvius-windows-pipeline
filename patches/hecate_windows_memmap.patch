@@ -1,0 +1,15 @@
+--- a/hecate.py
++++ b/hecate.py
+@@ -431,7 +431,12 @@
+             partial = output.with_suffix('.partial')
+             write_png(result,partial)
+             partial.replace(output)
++            try:
++                result._mmap.close()
++            except Exception:
++                pass
+             del result
++            import gc; gc.collect()
+     metadata = {
+         'checkpoint':Path(args.checkpoint).name,'sampling_um':args.spacing_um,
+         'shape_yx':list(volume.shape[-2:]),'reverse_z':args.reverse,
