@@ -4,7 +4,7 @@
 set -euo pipefail
 MESH=$1; OUT=$2; N=${3:-26}
 W=/workspace/vesuvius
-VOL=https://vesuvius-challenge-open-data.s3.us-east-1.amazonaws.com/PHerc0358/volumes/20250821151737-9.362um-1.2m-113keV-masked.zarr
+VOL=${VOL:-https://vesuvius-challenge-open-data.s3.us-east-1.amazonaws.com/PHerc0358/volumes/20250821151737-9.362um-1.2m-113keV-masked.zarr}
 [[ -f $OUT/0/.zarray ]] && exit 0
 tmp=$OUT.part; rm -rf "$tmp"
 QT_QPA_PLATFORM=offscreen OMP_NUM_THREADS=${RENDER_THREADS:-8} \

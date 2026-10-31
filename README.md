@@ -76,13 +76,32 @@ venv314\Scripts\python scripts\villa_sweep.py <surface.zarr> <out_dir> --models 
 
 `VESUVIUS_ROOT` (default `~/vesuvius`) is where scripts look for `models/`, `data/` and `villa/`.
 
-## Status of the PHerc0358 attempt
+## First Letters screen: PHerc0358 and PHerc0813 (negative so far)
 
-The pod pipeline in `pod/` was built for a First Letters attempt on PHerc0358 (best median scan
-quality of the eligible scrolls, little prior work). Two 1,500-slice bands are being fitted and
-screened; results will be added here. A first 2,000-step test mesh already showed the main risk:
-ink maps over mesh that drifts across sheets are noise, so the screen scores reading-minus-blind
-asymmetry, which cancels drift artifacts.
+One RunPod A100 night (about $9) with the pipeline in `pod/`:
+
+| scroll | band (z) | fit | windings screened | on-sheet after snap | result |
+|---|---|---|---|---|---|
+| PHerc0358 | 8700-10200 | 15,245 steps ACW, 12.3% tracks satisfied (2k-step test) | 41 (w030-w110, every other) | 93.6% | no text |
+| PHerc0358 | 7200-8700 | 10,000 steps ACW | 41 | 90.0% | no text |
+| PHerc0813 | 9000-10000 | published meshes, [mkorayemai-web/vesuvius-band-sweep](https://github.com/mkorayemai-web/vesuvius-band-sweep) v1 | 21 (every 4th) | (pre-snapped) | no text; one weak lead (w086), below |
+
+Screen: dense_native at d = 0 on both sides of each winding, scored per ~1.4 x 1.4 cm tile as
+mean(reverse - forward) ink probability. The ACW and CW 2,000-step test fits on PHerc0358 tied
+(12.3% vs 12.3% tracks, 49.2% vs 48.9% track points), so the sense rule (CW iff
+`z_direction_is_top_to_bottom == left_handed_coordinates`) was kept.
+
+What the top-scoring PHerc0358 tiles actually are: in both bands they sit at the same angular
+position across neighbouring windings (w074/w076 in one band, w096-w100 in the other), over crushed,
+folded papyrus. Both sides light up there, and the difference map is speckle without rows:
+
+![PHerc0358 w076, top-scoring winding](results/pherc0358_w076_screen.png)
+*Rows: CT at the surface, forward ink, reverse ink, reverse - forward. Ink responds to the folded
+papyrus at left and right, not to writing; the clean single sheet in the middle stays dark on both sides.*
+
+This is a single-model, single-depth screen of every second winding, so it lowers the odds of
+text in these bands; it does not rule it out. Fitted meshes for all 240 windings are available on
+request.
 
 ## License
 
