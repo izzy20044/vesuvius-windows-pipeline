@@ -17,6 +17,12 @@ read -r q p < /sys/fs/cgroup/cpu.max 2>/dev/null || q=max
 CPUS=${CPUS:-$([[ $q != max ]] && echo $(( q / p )) || nproc)}
 export OMP_NUM_THREADS=$CPUS MKL_NUM_THREADS=$CPUS
 log "using $CPUS CPUs (cgroup quota)"
+# The container disk (/) is small (50 GB on RunPod). VC3D keeps every streamed chunk in
+# ~/.VC3D/remote_cache (47 GB after ~80 winding renders) and villa writes full-size temp zarrs
+# to $TMPDIR; put both on the volume.
+mkdir -p "$W/vc3d_remote_cache" "$W/tmp" "$HOME/.VC3D"
+[[ -L $HOME/.VC3D/remote_cache ]] || { rm -rf "$HOME/.VC3D/remote_cache"; ln -s "$W/vc3d_remote_cache" "$HOME/.VC3D/remote_cache"; }
+export TMPDIR=$W/tmp PIP_NO_CACHE_DIR=1
 
 log "system packages"
 export DEBIAN_FRONTEND=noninteractive

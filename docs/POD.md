@@ -30,6 +30,10 @@ Linux notes:
 * `nproc` reports the host's cores in a container; the scripts use the cgroup quota (`/sys/fs/cgroup/cpu.max`).
 * On Linux the published crossings cache validates once the DBM's original `mtime_ns` is restored.
 * The cu128 index has no torch >= 2.12 for Python 3.14; the ink env uses cu130 (driver >= CUDA 13).
+* The container disk (`/`, 50 GB on RunPod) fills up silently: VC3D caches every streamed chunk in
+  `~/.VC3D/remote_cache` (47 GB after ~80 winding renders) and villa writes full-size temp zarrs to
+  `$TMPDIR`. `setup_pod.sh` symlinks the cache to the volume and `screen.sh` sets `TMPDIR` there;
+  without that, ink inference fails with `OSError: [Errno 28] No space left on device`.
 * `pkill -f <script>` from an ssh command line matches the ssh shell itself; `relaunch.sh` uses
   bracketed patterns.
 

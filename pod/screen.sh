@@ -5,6 +5,8 @@
 set -uo pipefail
 TAG=$1; Z0=$2; Z1=$3
 W=/workspace/vesuvius; cd "$W"
+# keep temp files (villa writes full-size probability zarrs) on the volume, not the 50 GB container disk
+export TMPDIR=$W/tmp; mkdir -p "$TMPDIR"
 OUT=$W/screen/$TAG; mkdir -p "$OUT"/{renders,maps,thumbs}
 LOG=$OUT/screen.log
 say() { echo "[$(date +%T)] $*" | tee -a "$LOG"; }
