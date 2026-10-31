@@ -26,3 +26,4 @@ awk 'NR % 2 == 1' "$OUT/windings.txt" > "$OUT/list_a"; awk 'NR % 2 == 0' "$OUT/w
 worker "$OUT/list_a" & worker "$OUT/list_b" & wait
 awk -F'\t' '{a = $3 < 0 ? -$3 : $3; print a "\t" $0}' "$OUT/scores.tsv" | sort -gr | cut -f2- > "$OUT/ranked.tsv"
 say "SCREEN DONE $TAG: $(wc -l < "$OUT/scores.tsv") scored"
+[[ ${AUTOSTOP:-1} == 1 ]] && bash pod/autostop.sh "${AUTOSTOP_GRACE_MIN:-20}"

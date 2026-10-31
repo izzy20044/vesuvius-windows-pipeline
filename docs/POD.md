@@ -34,6 +34,10 @@ Linux notes:
   `~/.VC3D/remote_cache` (47 GB after ~80 winding renders) and villa writes full-size temp zarrs to
   `$TMPDIR`. `setup_pod.sh` symlinks the cache to the volume and `screen.sh` sets `TMPDIR` there;
   without that, ink inference fails with `OSError: [Errno 28] No space left on device`.
+* **Idle billing.** A pod keeps billing at full GPU rate after the work ends. `after_fits.sh` and
+  `screen_pre.sh` finish with `autostop.sh`, which stops the pod after a 20-minute grace period for
+  copying results (`touch KEEP_ALIVE` cancels it). Without it, a dropped session left an A100 idle
+  for ~2h20m in testing. Stopping keeps the volume; terminate in the console when done.
 * `pkill -f <script>` from an ssh command line matches the ssh shell itself; `relaunch.sh` uses
   bracketed patterns.
 

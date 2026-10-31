@@ -13,3 +13,5 @@ wait_for() { until grep -qE "$2" "$W/$1" 2>/dev/null; do sleep 30; done; }
 ) &
 wait
 st "ALL SCREENS FINISHED"
+# never leave the GPU billing idle if nobody is watching (see autostop.sh)
+bash pod/autostop.sh "${AUTOSTOP_GRACE_MIN:-20}"
